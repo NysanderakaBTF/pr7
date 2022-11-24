@@ -1,65 +1,10 @@
 ﻿#include "coder_encoder.h"
-
-#include <iostream>
-#include <vector>
 using namespace std;
 #define maxWindow 4
-std::tuple<int, int, char> coder_encoder::find_match(int buffsize,const std::string& a, int pos)
+coder_encoder::coder_encoder(int a, string f)
 {
-	int kon = std::min(pos + buffsize, (int) a.size());
-	int p = -1;
-	int l = -1;
-	char c;
-	auto AMOGUS = [](const std::string& aaaa, int begi, int endi)
-	{
-		std::string ss = "";
-		for (int i = begi; i < endi; ++i)
-		{
-			ss.push_back(aaaa[i]);
-		}
-		return ss;
-	};
-	for (int i = pos+1; i <= kon; ++i)
-	{
-		int mmmm = std::max(0, pos - window_size_lz77 + 1);
-		//std::string ss = a.substr(pos +1, i + 1);
-		//std::string ss = AMOGUS(a,pos + 1, i + 1);
-		std::string ss = a.substr(pos + 1, (i + 1)-(pos +1));
-		for (int j = mmmm; j <= pos; ++j)
-		{
-			int qqqq = ss.size() / (pos - j + 1);
-			int ent = ss.size() % (pos - j + 1);
-
-			std::string mat = ""; 
-			for (int k = 0; k < qqqq; ++k)
-			{
-				//mat += AMOGUS(a,j, pos + 1);
-				mat += a.substr(j, pos + 1 - j);
-			}
-
-			//mat += AMOGUS(a,j, j + ent);
-			mat += a.substr(j, ent);
-			std::cout <<qqqq<< "      "<<j << " " << pos << "    " << ent << "    " << mat << "          " << ss << std::endl;
-
-			if (mat==ss && ss.size()>1 )
-			{
-				p = pos - j + 1;
-				l = ss.size();
-				c = a[i + 1];
-			}
-		}
-		
-	}
-	if (p == -1 && l == -1)
-	{
-		return std::make_tuple(0, 0, a[pos + 1]);
-	}else
-	{
-		return std::make_tuple(p, l, c);
-	}
-}
-coder_encoder::coder_encoder(int a)
-{
+	coding_size = f.size();
+	p.resize(f.size());
 	window_size_lz77 = a;
 }
 void coder_encoder::set_window_size(int a)
@@ -219,6 +164,52 @@ std::string coder_encoder::LZ77_decode(const std::string& ss)
 
 }
 
+void coder_encoder::shannon(int l, int h, std::vector<coder_encoder::node>& p)
+{
+	float pack1 = 0, pack2 = 0, diff1 = 0, diff2 = 0;
+	int i, d, k, j;
+	if ((l + 1) == h || l == h || l > h) {
+		if (l == h || l > h)
+			return;
+		//p[h].arr[++(*p[h].top)] = 0;
+		p[h].arr[++(p[h].top)] = 0;
+		p[l].arr[++(p[l].top)] = 1;
+		return;
+	}
+	else {
+		for (i = l; i <= h - 1; i++)
+			pack1 = pack1 + p[i].pro;
+		pack2 = pack2 + p[h].pro;
+		diff1 = pack1 - pack2;
+		if (diff1 < 0)
+			diff1 = diff1 * -1;
+		j = 2;
+		while (j != h - l + 1) {
+			k = h - j;
+			pack1 = pack2 = 0;
+			for (i = l; i <= k; i++)
+				pack1 = pack1 + p[i].pro;
+			for (i = h; i > k; i--)
+				pack2 = pack2 + p[i].pro;
+			diff2 = pack1 - pack2;
+			if (diff2 < 0)
+				diff2 = diff2 * -1;
+			if (diff2 >= diff1)
+				break;
+			diff1 = diff2;
+			j++;
+		}
+		k++;
+		for (i = l; i <= k; i++)
+			p[i].arr[++(p[i].top)] = 1;
+		for (i = k + 1; i <= h; i++)
+			p[i].arr[++(p[i].top)] = 0;
+		// Invoke shannon function
+		shannon(l, k, p);
+		shannon(k + 1, h, p);
+	}
+}
+
 coder_encoder::code::code(int a, int b, char c)
 {
 	off = a;
@@ -231,4 +222,21 @@ coder_encoder::code::code()
 	off = 0;
 	len = 0;
 	nextChar = ' ';
+}
+
+
+// function to find shannon code
+
+
+// function to display shannon codes
+void coder_encoder::display(int n, std::vector<coder_encoder::node> p)
+{
+	int i, j;
+	cout << " Symbol Probability Code";
+	for (i = n - 1; i >= 0; i--) {
+		cout << " " << p[i].sym << " " << p[i].pro << " ";
+		for (j = 0; j <= p[i].top; j++)
+			cout << p[i].arr[j];
+		cout << endl;
+	}
 }
