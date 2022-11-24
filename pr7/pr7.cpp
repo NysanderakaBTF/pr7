@@ -1,6 +1,6 @@
 ﻿#include <algorithm>
 
-#include "coder_encoder.h"
+#include "coder_encoder77.h"
 #include <iostream>
 #include <map>
 
@@ -78,8 +78,17 @@ int main()
 
 
 
+	struct node {
+		// for storing symbol
+		std::string sym;
+		// for storing probability or frquency
+		double pro;
+		int arr[20];
+		int top;
+	};
 
-
+	tuple<string, double, int[20], int> elem;
+	std::get<2>(elem)[1] = 7;
 
 	// Input probability of symbols
 	//float x[] = { 0.22, 0.28, 0.15, 0.30, 0.05 };

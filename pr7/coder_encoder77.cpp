@@ -1,4 +1,4 @@
-﻿#include "coder_encoder.h"
+﻿#include "coder_encoder77.h"
 using namespace std;
 #define maxWindow 4
 coder_encoder::coder_encoder(int a, string f)
@@ -11,45 +11,7 @@ void coder_encoder::set_window_size(int a)
 {
 	window_size_lz77 = a;
 }
-std::string coder_encoder::RLE_encode(const std::string& i)
-{
-	std::string k;
-	int cnt = 1;
-	for (int qqq = 0; qqq < i.size(); ++qqq)
-	{
-		cnt = 1;
-		while (qqq < i.size()- 1 && i[qqq] == i[qqq + 1]) {
-			cnt++;
-			qqq++;
-		}
-		k.push_back(i[qqq]);
-		k+=std::to_string(cnt);
-	}
-	return std::move(k);
-}
 
-std::string coder_encoder::RLE_decode(const std::string& mm)
-{
-	std::string ss="";
-	std::string sub = "";
-	int q = 0, f=0;
-	for (int i = 0; i < mm.size(); ++i)
-	{
-		sub = "";
-		q = 0; f = 0;
-		ss.push_back(mm[i]);
-		while (isdigit(mm[++i]))
-		{
-			q+=char(int(mm[i]) - 48)*pow(10,f++);
-		}
-		i--;
-		for (int j = 0; j <q-1; ++j)
-		{
-			ss.push_back( ss.at(ss.size()-1));
-		}
-	}
-	return std::move(ss);
-}
 
 std::string coder_encoder::LZ77_encode(int buffsize, const std::string& a )
 {
@@ -224,11 +186,6 @@ coder_encoder::code::code()
 	nextChar = ' ';
 }
 
-
-// function to find shannon code
-
-
-// function to display shannon codes
 void coder_encoder::display(int n, std::vector<coder_encoder::node> p)
 {
 	int i, j;

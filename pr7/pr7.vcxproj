@@ -139,11 +139,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="coder_encoder.cpp" />
+    <ClCompile Include="coder_encoder77.cpp" />
+    <ClCompile Include="coding_decoding_lz78.cpp" />
+    <ClCompile Include="hoffmaan.cpp" />
     <ClCompile Include="pr7.cpp" />
+    <ClCompile Include="RLE_coder_decoder.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="coder_encoder.h" />
+    <ClInclude Include="coder_encoder77.h" />
+    <ClInclude Include="coding_decoding_lz78.h" />
+    <ClInclude Include="hoffmaan.h" />
+    <ClInclude Include="RLE_coder_decoder.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

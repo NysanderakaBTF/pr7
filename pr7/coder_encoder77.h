@@ -10,6 +10,8 @@ class coder_encoder
 	int coding_size;
 public:
 
+
+
 	struct node {
 		// for storing symbol
 		std::string sym;
@@ -32,9 +34,6 @@ public:
 	std::vector<code> vt;
 	coder_encoder(int, std::string);
 	void set_window_size(int a);
-	 std::string RLE_encode(const std::string&);
-	 std::string RLE_decode(const std::string&);
-
 	 std::string LZ77_encode(int, const std::string&);
 	 std::string LZ77_decode(const std::string&);
 	 void display(int n, std::vector<coder_encoder::node> p);
