@@ -3,13 +3,13 @@
 #include <iostream>
 #include <vector>
 using namespace std;
-
+#define maxWindow 4
 std::tuple<int, int, char> coder_encoder::find_match(int buffsize,const std::string& a, int pos)
 {
 	int kon = std::min(pos + buffsize, (int) a.size());
 	int p = -1;
 	int l = -1;
-	char c = ' ';
+	char c;
 	auto AMOGUS = [](const std::string& aaaa, int begi, int endi)
 	{
 		std::string ss = "";
@@ -108,42 +108,80 @@ std::string coder_encoder::RLE_decode(const std::string& mm)
 
 std::string coder_encoder::LZ77_encode(int buffsize, const std::string& a )
 {
-	
-	std::string res="";
-	for(int i=-1; i < (int)a.size()-1;)
+	string str = a;
+	cout << str << endl;
+	int window1, window2;
+	for (int i = 0; i < str.length(); i++) {
+		if (i + 1 <= maxWindow) window1 = i;
+		else window1 = maxWindow;
+
+		if (i + window1 < str.length()) window2 = window1;
+		else window2 = str.length() - i;
+
+		//printf("%d %d %d\n", window1, window2, i);
+		string str1 = str.substr(i - window1, window1);
+		string str2 = str.substr(i, window2);
+		//cout << str1 << " : " << str2 << endl;
+
+		int off = -1;
+		while (true) {
+			if (window2 == 0) break; // Пустая строка, прямой выход 
+			string str3 = str2.substr(0, window2);
+			off = str1.find(str3); // Не найдено, выкл. = -1 
+			//cout << str3 << " :: " << off << " :: " << i + window2 << endl;
+			if (off != -1) break; // Нашли, выходим 
+			window2--;
+			if (window2 <= 0) break;
+		}
+
+		if (off != -1) {
+			coder_encoder::code cd;
+			cd.len = window2;
+			cd.off = window1 - off;
+			cd.nextChar = str[i + window2];
+			vt.push_back(cd);
+			i += window2;
+		}
+		else {
+			coder_encoder::code cd;
+			cd.len = 0;
+			cd.off = 0;
+			cd.nextChar = str[i + window2];
+			vt.push_back(cd);
+		}
+	}
+
+	string res = "";
+	for(auto i : vt)
 	{
-		auto re = find_match(buffsize, a, i);
-		res += "<" + std::to_string(std::get<0>(re)) + "," + std::to_string(std::get<1>(re)) +","+ std::get<2>(re) + ">";
-		
-		i += std::get<1>(re) + 1;
+		res += "<" + to_string(i.off) + "," + to_string(i.len) + "," + i.nextChar + ">";
 	}
 	return res;
 }
 
 std::string coder_encoder::LZ77_decode(const std::string& ss)
 {
-	int p = -1;
-	std::string res = "";
-	vector<tuple<int, int, char>> v;
+
+	vector<code> v;
 	string k = ss;
-	while (k.size()!=0)
+	while (k.size() != 0)
 	{
 		int a = k.find_first_of("<");
 		int b = k.find_first_of(">");
-		string m = k.substr(a+1, b - a-1);
-		k.erase(k.find_first_of("<"), b-a+1);
+		string m = k.substr(a + 1, b - a - 1);
+		k.erase(k.find_first_of("<"), b - a + 1);
 		int pos = 0;
 		int aa = 0;
 		int po = 0;
-		while (m[pos]!=',')
+		while (m[pos] != ',')
 		{
-			if(m[pos]!=',')
+			if (m[pos] != ',')
 			{
 				aa += (int(m[pos] - 48)) * pow(10, po++);
 			}
 			pos++;
 		}
-		m.erase(0, pos+1);
+		m.erase(0, pos + 1);
 		po = 0;
 		int bb = 0;
 		pos = 0;
@@ -155,42 +193,42 @@ std::string coder_encoder::LZ77_decode(const std::string& ss)
 			}
 			pos++;
 		}
-		m.erase(0, pos+1);
+		m.erase(0, pos + 1);
 		char f = m[0];
 
-		cout << aa << " " << bb << " " << f << endl;
-
-		if(aa == 0 && bb == 0)
-			res.push_back(f);
-		else if (aa>=bb)
-		{
-			for (int i = pos-aa+1; i < pos+1; ++i)
-			{
-				res.push_back(res[i]);
-			}
-			
-			res.push_back(f);
-		}else
-		{
-			int pov = bb / aa;
-			int en = bb % aa;
-			string hh = "";
-			for (int i = pos - aa + 1; i < pos + 1; ++i)
-			{
-				hh.push_back(res[i]);
-			}
-			for (int i = 0; i < pov; ++i)
-			{
-				res += hh;
-			}
-			for (int i = pos-aa+1; i <en; ++i)
-			{
-				res.push_back(res[i]);
-			}
-			res.push_back(f);
-		}
-		pos += bb + 1;
+		v.emplace_back(aa, bb, f);
 
 	}
-	return res;
+
+
+
+
+	string strOut;
+	for (int i = 0; i < vt.size(); i++) {
+		if (vt[i].len == 0) {
+			strOut += v[i].nextChar;
+		}
+		else {
+			int len = strOut.length();
+			len -= v[i].off;
+			string temp = strOut.substr(len, v[i].len);
+			strOut += temp + v[i].nextChar;
+		}
+	}
+	return strOut;
+
+}
+
+coder_encoder::code::code(int a, int b, char c)
+{
+	off = a;
+	len = b;
+	nextChar = c;
+}
+
+coder_encoder::code::code()
+{
+	off = 0;
+	len = 0;
+	nextChar = ' ';
 }
