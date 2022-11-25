@@ -10,33 +10,17 @@ class coder_encoder
 	int coding_size;
 public:
 
-
-
-	struct node {
-		// for storing symbol
-		std::string sym;
-		// for storing probability or frquency
-		double pro;
-		int arr[20];
-		int top;
-	};
-	
-
-	struct code {
-		int off;
-		int len;
+	struct coding_element_code {
+		int offet_value;
+		int replacement_length;
 		char nextChar;
-		code(int a, int b, char c);
-		code();
+		coding_element_code(int a, int b, char c);
+		coding_element_code();
 	};
-
-	std::vector<node> p;
-	std::vector<code> vt;
+	std::vector<coding_element_code> result_codes_dict;
 	coder_encoder(int, std::string);
 	void set_window_size(int a);
 	 std::string LZ77_encode(int, const std::string&);
 	 std::string LZ77_decode(const std::string&);
-	 void display(int n, std::vector<coder_encoder::node> p);
-	// void shannon(int l, int h, coder_encoder::node p[]);
-	 void shannon(int l, int h, std::vector<coder_encoder::node>& p);
+
 };
