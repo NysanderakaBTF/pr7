@@ -1,5 +1,7 @@
 #include "RLE_coder_decoder.h"
 
+#include <iostream>
+
 
 std::string RLE_coder_decoder::RLE_encode(const std::string& i)
 {
@@ -16,6 +18,7 @@ std::string RLE_coder_decoder::RLE_encode(const std::string& i)
 		k += std::to_string(cnt);
 	}
 	return std::move(k);
+	
 }
 
 std::string RLE_coder_decoder::RLE_decode(const std::string& mm)
@@ -30,10 +33,11 @@ std::string RLE_coder_decoder::RLE_decode(const std::string& mm)
 		ss.push_back(mm[i]);
 		while (isdigit(mm[++i]))
 		{
-			q += char(int(mm[i]) - 48) * pow(10, f++);
+			q =q*10+ char(int(mm[i]) - 48) ;
 		}
 		i--;
-		for (int j = 0; j < q - 1; ++j)
+
+		for (int j = 0; j < q-1; ++j)
 		{
 			ss.push_back(ss.at(ss.size() - 1));
 		}

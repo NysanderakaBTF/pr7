@@ -105,11 +105,35 @@ std::string shennon_fano::encode(const std::string& a)
 
 	node temp;
 	int jj = 0;
+	//for (auto value : o)
+	//	p[jj++].encoding_symbol += value.first;
+	//jj = 0;
+	//for (auto value : prpb)
+	//	p[jj++].usage_probability = value.second;
+
+	vector<pair<char, double>> aaaaaa;
+	aaaaaa.resize(o.size());
+
+
 	for (auto value : o)
-		p[jj++].encoding_symbol += value.first;
+		aaaaaa[jj++].first = value.first;
 	jj = 0;
 	for (auto value : prpb)
-		p[jj++].usage_probability = value.second;
+		aaaaaa[jj++].second = value.second;
+
+
+
+	auto u = [&](char a, double b)
+	{
+		node *q = new node;
+		q->encoding_symbol = a;
+		q->usage_probability = b;
+		return q;
+	};
+	for (int i = 0; i < aaaaaa.size(); ++i)
+	{
+		p.push_back(*u(aaaaaa[i].first,aaaaaa[i].second));
+	}
 
 	sort(p.begin(), p.end(), [&](node a, node b){return (a.usage_probability) > (b.usage_probability);});
 

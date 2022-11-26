@@ -18,27 +18,25 @@ std::string coder_encoder::LZ77_encode(int buffsize, const std::string& a )
 	cout << input_text_string << endl;
 	int checking_interval1, checking_interval2;
 	for (int i = 0; i < input_text_string.length(); i++) {
-		if (i + 1 <= window_size_lz77) checking_interval1 = i;
-		else checking_interval1 = window_size_lz77;
-		if (i + checking_interval1 < input_text_string.length()) checking_interval2 = checking_interval1;
-		else checking_interval2 = input_text_string.length() - i;
-		string str1 = "";
+
+		checking_interval1 = (i + 1 <= window_size_lz77) ? i : window_size_lz77;
+		checking_interval2 = (i + checking_interval1 < input_text_string.length()) ? checking_interval1 : input_text_string.length() - i;
+
+		string substring1 = "";
 		for (int j = 0; j < checking_interval1; ++j)
-			str1.push_back(input_text_string[i-checking_interval1+ j]);
-		string str2 = "";
+			substring1.push_back(input_text_string[i-checking_interval1+ j]);
+		string substring2 = "";
 		for (int j = 0; j < checking_interval2; ++j)
-			str2.push_back(input_text_string[i+ j]);
+			substring2.push_back(input_text_string[i+ j]);
+
 		int offset_value = -1;
-		while (true) {
-			if (checking_interval2 == 0) break; 
+
+		while (checking_interval2 != 0  and !(offset_value != -1) and checking_interval2 >= 0) {
 			string str3 = "";
 			for (int j = 0; j < checking_interval2; ++j)
-				str3.push_back(str2[j]);
-
-			offset_value = str1.find(str3); 
-			if (offset_value != -1) break; 
+				str3.push_back(substring2[j]);
+			offset_value = substring1.find(str3); 
 			checking_interval2--;
-			if (checking_interval2 <= 0) break;
 		}
 
 		if (offset_value != -1) {
@@ -114,7 +112,11 @@ std::string coder_encoder::LZ77_decode(const std::string& ss)
 		else {
 			int len = result.length();
 			len -= element_codes[i].offet_value;
-			string temp = result.substr(len, element_codes[i].replacement_length);
+			string temp = "";
+			for (int jj = len; jj < element_codes[i].replacement_length+len; ++jj)
+			{
+				temp.push_back(result[jj]);
+			}
 			result += temp + element_codes[i].nextChar;
 		}
 	}
