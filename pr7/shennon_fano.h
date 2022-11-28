@@ -9,9 +9,7 @@ class shennon_fano
 	
 public:
 	struct node {
-		// for storing symbol
 		std::string encoding_symbol;
-		// for storing probability or frquency
 		double usage_probability;
 		int codes_array[20];
 		int final_coding_length;

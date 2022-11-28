@@ -15,7 +15,7 @@ void coder_encoder::set_window_size(int a)
 std::string coder_encoder::LZ77_encode(int buffsize, const std::string& a )
 {
 	string input_text_string = a;
-	cout << input_text_string << endl;
+	//cout << input_text_string << endl;
 	int checking_interval1, checking_interval2;
 	for (int i = 0; i < input_text_string.length(); i++) {
 
@@ -81,7 +81,8 @@ std::string coder_encoder::LZ77_decode(const std::string& ss)
 		{
 			if (m[pos] != ',')
 			{
-				aa += (int(m[pos] - 48)) * pow(10, po++);
+				//aa += (int(m[pos] - 48)) * pow(10, po++);
+				aa = aa * 10 + (int(m[pos] - 48));
 			}
 			pos++;
 		}
@@ -93,7 +94,8 @@ std::string coder_encoder::LZ77_decode(const std::string& ss)
 		{
 			if (m[pos] != ',')
 			{
-				bb += (int(m[pos] - 48)) * pow(10, po++);
+				//bb += (int(m[pos] - 48)) * pow(10, po++);
+				bb = bb * 10 + (int(m[pos] - 48));
 			}
 			pos++;
 		}

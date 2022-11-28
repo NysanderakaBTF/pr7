@@ -14,9 +14,11 @@ std::vector<coding_decoding_lz78::node_encode> coding_decoding_lz78::encode_78(s
 
 	std::vector<std::pair<std::string, int> > codeing_dictionary;
 
-
+int lplpl=0;
 	codeing_dictionary.push_back(std::make_pair("", 0));
+	int cpount = 0;
 	for (auto c : input_str) {
+		cpount++;
 		std::string next = prev_substing + c;
 #ifdef DEBUG
 		for (auto c : codeing_dictionary) {
@@ -41,7 +43,7 @@ std::vector<coding_decoding_lz78::node_encode> coding_decoding_lz78::encode_78(s
 			return -1;
 		};
 		if (find(codeing_dictionary, next) == -1) {
-			int lplpl=0;
+			
 			std::string dafgedrgs;
 			lplpl = get(codeing_dictionary,prev_substing);
 			node_encode code(lplpl, c);
@@ -53,7 +55,25 @@ std::vector<coding_decoding_lz78::node_encode> coding_decoding_lz78::encode_78(s
 			prev_substing = "";
 		}
 		else {
-			prev_substing = next;
+			if(cpount!=input_str.size())
+				prev_substing = next;
+			else
+			{
+				if (find(codeing_dictionary, next) != -1)
+				{
+
+					prev_substing = next;
+					c = '\0';
+
+				}
+
+				std::string dafgedrgs;
+				lplpl = get(codeing_dictionary, prev_substing);
+				node_encode code(lplpl, c);
+				ret.push_back(code);
+				answer += "<"; answer.push_back(c); answer += "," + std::to_string(lplpl) + ">";
+				codeing_dictionary.push_back(std::make_pair(next, (int)codeing_dictionary.size()));
+			}
 		}
 	}
 	out_string = answer;
@@ -66,6 +86,7 @@ std::string coding_decoding_lz78::decode_78(std::string& inp)
 	std::string k = inp;
 	while (k.size() != 0)
 	{
+
 		int a = k.find_first_of("<");
 		int b = k.find_first_of(">");
 		std::string m = k.substr(a + 1, b - a - 1);
@@ -73,8 +94,14 @@ std::string coding_decoding_lz78::decode_78(std::string& inp)
 		int pos = 0;
 		int aa = 0;
 		int po = 0;
-		char f = m[0];
-		m.erase(0, pos + 2);
+		char f;
+		if (m[0] != ',')
+			f = m[0];
+		else
+			f = '\0';
+		if (f != '\0')
+			m.erase(0, pos + 2);
+		else m.erase(0, 1);
 		while (m[pos] != ',' && pos<m.size())
 		{
 			if (m[pos] != ',')
@@ -89,13 +116,12 @@ std::string coding_decoding_lz78::decode_78(std::string& inp)
 		input_sequence.emplace_back(aa, f);
 
 	}
-
-
 	std::string resilting_decoded = "";
 	std::vector<std::string> sub_dict;
+	std::string sub_str;
 	sub_dict.push_back("");
 	for (auto code : input_sequence) {
-		std::string sub_str = sub_dict[code.i] + code.c;
+		sub_str = sub_dict[code.i] + code.c;
 		sub_dict.push_back(sub_str);
 		resilting_decoded += sub_str;
 	}

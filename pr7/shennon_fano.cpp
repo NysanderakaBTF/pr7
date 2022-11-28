@@ -1,9 +1,10 @@
 #include "shennon_fano.h"
 #include "tree.h"
 #include <algorithm>
+#include <numeric>
 
 
-//#define	DEBUG
+#define	DEBUG
 
 shennon_fano::shennon_fano(std::string& text)
 {
@@ -43,7 +44,7 @@ void shennon_fano::shennon_generator(int l, int h, std::vector<node>& p)
 	else {
 		for (i = l; i <= h - 1; i++)
 			first_prob = first_prob + p[i].usage_probability;
-		secondpopo = secondpopo + p[h].usage_probability;
+			secondpopo = secondpopo + p[h].usage_probability;
 		d1 = first_prob - secondpopo;
 		if (d1 < 0)
 			d1 = d1 * -1;
@@ -51,6 +52,7 @@ void shennon_fano::shennon_generator(int l, int h, std::vector<node>& p)
 		while (j != h - l + 1) {
 			k = h - j;
 			first_prob = secondpopo = 0;
+
 			for (i = l; i <= k; i++)
 				first_prob = first_prob + p[i].usage_probability;
 			for (i = h; i > k; i--)
@@ -105,11 +107,6 @@ std::string shennon_fano::encode(const std::string& a)
 
 	node temp;
 	int jj = 0;
-	//for (auto value : o)
-	//	p[jj++].encoding_symbol += value.first;
-	//jj = 0;
-	//for (auto value : prpb)
-	//	p[jj++].usage_probability = value.second;
 
 	vector<pair<char, double>> aaaaaa;
 	aaaaaa.resize(o.size());
@@ -137,7 +134,7 @@ std::string shennon_fano::encode(const std::string& a)
 
 	sort(p.begin(), p.end(), [&](node a, node b){return (a.usage_probability) > (b.usage_probability);});
 
-	for (int i = 0; i < a.size(); i++)
+	for (int i = 0; i < p.size(); i++)
 		p[i].final_coding_length = -1;
 
 	shennon_generator(0, o.size() - 1, p);
@@ -148,6 +145,10 @@ std::string shennon_fano::encode(const std::string& a)
 		for (int j = 0; j <= p[i].final_coding_length; j++)
 			generated_sequence.push_back(static_cast<char>(p[i].codes_array[j] + 48));
 		dict.emplace(generated_sequence, p[i].encoding_symbol);
+	}
+	for (auto value : dict)
+	{
+		cout << value.first<<"     "<< o[value.first[0]] << " -----> " << value.second << endl;
 	}
 	generated_sequence.clear();
 	for (char a1 : a)
